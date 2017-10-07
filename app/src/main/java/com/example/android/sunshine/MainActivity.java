@@ -17,12 +17,25 @@ package com.example.android.sunshine;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
 
+    TextView mWeatherDisplay;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forecast);
+        mWeatherDisplay = (TextView)findViewById(R.id.tv_weather_data);
+        String[] fakeWeather ={"7/10/2017 sunny 12C- 21C",
+                "8/10/2017 rain 2C- 12C",
+                "9/10/2017 fog 8C- 21C",
+                "10/10/2017 sunny 12C- 21C" };
+        for(String day:fakeWeather){
+            mWeatherDisplay.append(day+"\n\n\n");
+
+        }
     }
 }
