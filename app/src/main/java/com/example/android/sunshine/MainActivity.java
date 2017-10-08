@@ -18,6 +18,9 @@ package com.example.android.sunshine;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -48,6 +51,26 @@ public class MainActivity extends AppCompatActivity {
         new FetchWeatherTask().execute(location);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.forecast, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_refresh) {
+            mWeatherDisplay.setText("");
+            loadWeatherData();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     //sending location as string and getting array of string with weathe conditions
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
         @Override
@@ -73,16 +96,11 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
                 return null;
             }
-
         }
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
         }
-
-
         @Override
         protected void onPostExecute(String[] weatherConditions) {
 
