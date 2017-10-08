@@ -25,6 +25,7 @@
     <string name="app_name">Sunshine</string>
 
     <string name="refresh_btn">Refresh</string>
+    <string name="error_msg">Something go wrong</string>
     <!-- - - - - - - - - - - - - -->
     <!--Used by SunshineDateUtils-->
     <!-- - - - - - - - - - - - - -->

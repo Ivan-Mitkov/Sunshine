@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.android.sunshine.data.SunshinePreferences;
@@ -36,12 +37,15 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
 
     TextView mWeatherDisplay;
-
+    TextView mErrorMessageDisplay;
+    ProgressBar mProgresDisplay;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forecast);
         mWeatherDisplay = (TextView) findViewById(R.id.tv_weather_data);
+        mErrorMessageDisplay=(TextView)findViewById(R.id.error_msg);
+        mProgresDisplay=(ProgressBar)findViewById(R.id.progres_bar);
         loadWeatherData();
 
     }
@@ -49,6 +53,14 @@ public class MainActivity extends AppCompatActivity {
     private void loadWeatherData() {
         String location = SunshinePreferences.getPreferredWeatherLocation(this);
         new FetchWeatherTask().execute(location);
+    }
+    private void showWeatherDataView(){
+        mErrorMessageDisplay.setVisibility(View.INVISIBLE);
+        mWeatherDisplay.setVisibility(View.VISIBLE);
+    }
+    private void showErrorMessage(){
+        mErrorMessageDisplay.setVisibility(View.VISIBLE);
+        mWeatherDisplay.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -99,16 +111,20 @@ public class MainActivity extends AppCompatActivity {
         }
         @Override
         protected void onPreExecute() {
-            super.onPreExecute();
+            mProgresDisplay.setVisibility(View.VISIBLE);
         }
         @Override
         protected void onPostExecute(String[] weatherConditions) {
-
+            mProgresDisplay.setVisibility(View.INVISIBLE);
             if (weatherConditions != null) {
+                showWeatherDataView();
                 for (String condition : weatherConditions) {
                     mWeatherDisplay.append(condition + "\n\n\n");
                 }
 
+            }
+            else {
+                showErrorMessage();
             }
         }
     }

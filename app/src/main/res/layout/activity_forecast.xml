@@ -32,7 +32,19 @@
         android:padding="16dp"
         android:textSize="20sp"
          />
-
 </ScrollView>
+    <TextView
+        android:id="@+id/error_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/error_msg"
+        android:visibility="invisible"
+        />
+    <ProgressBar
+        android:id="@+id/progres_bar"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_gravity="center"
+        android:visibility="invisible"/>
 
 </FrameLayout>
