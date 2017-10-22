@@ -17,6 +17,7 @@ package com.example.android.sunshine;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -49,7 +51,8 @@ import java.net.URL;
 // completed (1) Implement the proper LoaderCallbacks interface and the methods of that interface
 public class MainActivity extends AppCompatActivity
         implements ForecastAdapterOnClickHandler,
-        LoaderManager.LoaderCallbacks<String[]> {
+        LoaderManager.LoaderCallbacks<String[]>,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -60,6 +63,7 @@ public class MainActivity extends AppCompatActivity
 
     private ProgressBar mLoadingIndicator;
     private static final int WEATHER_LOADER =20;
+    private static boolean PREFERRENCE_UPDATE=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +115,8 @@ public class MainActivity extends AppCompatActivity
          * the last created loader is re-used.
          */
         getSupportLoaderManager().initLoader(WEATHER_LOADER, bundleForLoader, callback);
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+        // Register MainActivity as a OnSharedPreferenceChangedListener in onCreate
     }
 
 
@@ -216,7 +222,8 @@ public class MainActivity extends AppCompatActivity
 
 
     private void openLocationInMap() {
-        String addressString = "1600 Ampitheatre Parkway, CA";
+        // Use preferred location rather than a default location to display in the map
+        String addressString = SunshinePreferences.getPreferredWeatherLocation(this);
         Uri geoLocation = Uri.parse("geo:0,0?q=" + addressString);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -262,4 +269,26 @@ public class MainActivity extends AppCompatActivity
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        PREFERRENCE_UPDATE=true;
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(PREFERRENCE_UPDATE){
+            getSupportLoaderManager().restartLoader(WEATHER_LOADER,null,this);
+            PREFERRENCE_UPDATE=false;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+    }
+    // In onStart, if preferences have been changed, refresh the data and set the flag to false
+    // Override onDestroy and unregister MainActivity as a SharedPreferenceChangedListener
+
 }
