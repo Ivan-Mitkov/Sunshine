@@ -70,12 +70,14 @@ public class WeatherProvider extends ContentProvider {
                 break;
             case CODE_WEATHER_WITH_DATE:
                 //we need two stings one for selection and string[] for selectionArgs
-                String mSelection="_id=?";//for selection
-                //getPathSegments gets the decoded path segments as List<String> without '/'
-                // than get() returns the element on position in uri
-                //position 0 is table name, 1 is id wich we need
-                String id=uri.getPathSegments().get(1);
-                String[] mSelectionArgs=new String[]{id};//initializing the array for selectionArgs
+                //for selection
+                String mSelection= WeatherContract.WeatherEntry.COLUMN_DATE+"=?";
+                //getLastPathSegment gets the decoded path segments as List<String> without '/'
+
+                String normalizedUtcDateString =uri.getLastPathSegment();
+                //initializing the array for selectionArgs
+                String[] mSelectionArgs=new String[]{normalizedUtcDateString };
+
                 cursor=db.query(WeatherContract.WeatherEntry.TABLE_NAME,
                         projection,
                         mSelection,
