@@ -134,7 +134,26 @@ public class WeatherProvider extends ContentProvider {
     }
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        throw new RuntimeException("Student, you need to implement the delete method!");
+        int row;
+        switch (sUriMatcher.match(uri)) {
+            case CODE_WEATHER:
+                // Query for the tasks directory and write a default case
+                row = mOpenHelper.getWritableDatabase().delete(
+                        WeatherContract.WeatherEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs
+                );
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri" + uri);
+        }
+        if(row>0){
+            // Notify the resolver of a change and return the number of items deleted
+            getContext().getContentResolver().notifyChange(uri,null);
+        }
+
+        return row;
+
     }
     @Override
     public String getType(@NonNull Uri uri) {
