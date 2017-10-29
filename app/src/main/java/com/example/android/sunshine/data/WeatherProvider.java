@@ -13,6 +13,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import com.example.android.sunshine.data.WeatherContract;
+import com.example.android.sunshine.utilities.SunshineDateUtils;
+
 public class WeatherProvider extends ContentProvider {
 
     //   Create static constant integer values named CODE_WEATHER & CODE_WEATHER_WITH_DATE to identify the URIs this ContentProvider can handle
@@ -45,7 +47,39 @@ public class WeatherProvider extends ContentProvider {
     }
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
-        throw new RuntimeException("Student, you need to implement the bulkInsert mehtod!");
+        //Only perform our implementation of bulkInsert if the URI matches the CODE_WEATHER code
+        // Get access to underlying database (read-only for query)
+        final SQLiteDatabase db =mOpenHelper.getWritableDatabase();
+        // Write URI match code and set a variable to return a Cursor
+        int match =sUriMatcher.match(uri);
+        switch (match){
+            case CODE_WEATHER:
+                db.beginTransaction();
+                int rowsInserted = 0;
+                try {
+                    for(ContentValues value:values){
+                        long weatherData = value.getAsLong(WeatherContract.WeatherEntry.COLUMN_DATE);
+                        if(!SunshineDateUtils.isDateNormalized(weatherData)){
+                            throw new IllegalArgumentException("Date must be normalized to inserd");
+                        }
+                        long _id=db.insert(WeatherContract.WeatherEntry.TABLE_NAME,null,value);
+                        if(_id!=-1){
+                            rowsInserted++;
+                        }
+
+                    }
+                    db.setTransactionSuccessful();
+                }finally {
+                    db.endTransaction();
+                }
+                if(rowsInserted>0){
+                    getContext().getContentResolver().notifyChange(uri,null);
+                }
+                return rowsInserted;
+            default:
+                return super.bulkInsert(uri,values);
+        }
+
     }
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection,
