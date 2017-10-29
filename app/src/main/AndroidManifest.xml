@@ -40,9 +40,13 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
-            >
+
         </activity>
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".SettingsActivity"/>
+        <provider
+            android:authorities="com.example.android.sunshine"
+            android:name="com.example.android.sunshine.data.WeatherProvider"/>
+        <!-- Register WeatherProvider in the manifest with the correct authorities -->
     </application>
 
 </manifest>
