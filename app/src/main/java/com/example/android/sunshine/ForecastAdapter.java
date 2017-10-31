@@ -38,7 +38,11 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
         @Override
         public void onClick(View v) {
-            mClickHandler.onClick(weatherSummary.getText().toString());
+            int adapterPosition = getAdapterPosition();
+//          COMPLETED (37) Instead of passing the String for the clicked item, pass the date from the cursor
+            mCursor.moveToPosition(adapterPosition);
+            long dateInMillis = mCursor.getLong(MainActivity.INDEX_WEATHER_DATE);
+            mClickHandler.onClick(dateInMillis);
         }
     }
 
@@ -48,7 +52,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         mContext=context;
     }
     public interface ForecastAdapterOnClickHandler {
-        void onClick(String weatherForDay);
+        void onClick(long date);
     }
 
     @Override
@@ -66,14 +70,14 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         //move the cursor
         mCursor.moveToPosition(position);
 
-        long millisecondsDate = mCursor.getLong(MainActivity.INDEX_COLUMN_DATE);
+        long millisecondsDate = mCursor.getLong(MainActivity.INDEX_WEATHER_DATE);
         String date= SunshineDateUtils.getFriendlyDateString(mContext,millisecondsDate,false);
 
-        int weatherId = mCursor.getInt(MainActivity.INDEX_COLUMN_WEATHER_ID);
+        int weatherId = mCursor.getInt(MainActivity.INDEX_WEATHER_CONDITION_ID);
         String description = SunshineWeatherUtils.getStringForWeatherCondition(mContext, weatherId);
 
-        double maxTemp = mCursor.getDouble(MainActivity.INDEX_COLUMN_MAX_TEMP);
-        double minTemp = mCursor.getDouble(MainActivity.INDEX_COLUMN_MIN_TEMP);
+        double maxTemp = mCursor.getDouble(MainActivity.INDEX_WEATHER_MAX_TEMP);
+        double minTemp = mCursor.getDouble(MainActivity.INDEX_WEATHER_MIN_TEMP);
 
         String highAndLowTemperature =
                 SunshineWeatherUtils.formatHighLows(mContext, maxTemp, minTemp);
