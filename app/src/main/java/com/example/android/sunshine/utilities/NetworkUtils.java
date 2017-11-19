@@ -15,7 +15,11 @@
  */
 package com.example.android.sunshine.utilities;
 
+import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
+
+import com.example.android.sunshine.data.SunshinePreferences;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +31,7 @@ import java.util.Scanner;
 /**
  * These utilities will be used to communicate with the weather servers.
  */
-public final class NetworkUtils {
+public final class  NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
@@ -53,13 +57,24 @@ public final class NetworkUtils {
     /* The number of days we want our API to return */
     private static final int numDays = 14;
 
-    final static String QUERY_PARAM = "q";
-    final static String LAT_PARAM = "lat";
-    final static String LON_PARAM = "lon";
-    final static String FORMAT_PARAM = "mode";
-    final static String UNITS_PARAM = "units";
-    final static String DAYS_PARAM = "cnt";
+    private final static String QUERY_PARAM = "q";
+    private final static String LAT_PARAM = "lat";
+    private final static String LON_PARAM = "lon";
+    private final static String FORMAT_PARAM = "mode";
+    private final static String UNITS_PARAM = "units";
+    private final static String DAYS_PARAM = "cnt";
 
+    public static URL getUrl(Context context) {
+        if (SunshinePreferences.isLocationLatLonAvailable(context)) {
+            double[] preferredCoordinates = SunshinePreferences.getLocationCoordinates(context);
+            double latitude = preferredCoordinates[0];
+            double longitude = preferredCoordinates[1];
+            return buildUrlWithLatitudeLongitude(latitude, longitude);
+        } else {
+            String locationQuery = SunshinePreferences.getPreferredWeatherLocation(context);
+            return buildUrlWithLocationQuery(locationQuery);
+        }
+    }
     /**
      * Builds the URL used to talk to the weather server using a location. This location is based
      * on the query capabilities of the weather provider that we are using.
@@ -67,7 +82,7 @@ public final class NetworkUtils {
      * @param locationQuery The location that will be queried for.
      * @return The URL to use to query the weather server.
      */
-    public static URL buildUrl(String locationQuery) {
+    public static URL buildUrlWithLocationQuery(String locationQuery) {
         Uri builtUri = Uri.parse(FORECAST_BASE_URL)
                 .buildUpon()
                 .appendQueryParameter(QUERY_PARAM,locationQuery)
@@ -78,10 +93,12 @@ public final class NetworkUtils {
         URL url = null;
         try{
             url=new URL(builtUri.toString());
+            Log.v(TAG, "URL: " + url);
+            return url;
         }catch (MalformedURLException e){
             e.printStackTrace();
+            return null;
         }
-        return url;
 
     }
 
@@ -93,9 +110,23 @@ public final class NetworkUtils {
      * @param lon The longitude of the location
      * @return The Url to use to query the weather server.
      */
-    public static URL buildUrl(Double lat, Double lon) {
-        /** This will be implemented in a future lesson **/
-        return null;
+    public static URL buildUrlWithLatitudeLongitude(Double lat, Double lon) {
+        Uri weatherQueryUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
+                .appendQueryParameter(LAT_PARAM, String.valueOf(lat))
+                .appendQueryParameter(LON_PARAM, String.valueOf(lon))
+                .appendQueryParameter(FORMAT_PARAM, format)
+                .appendQueryParameter(UNITS_PARAM, units)
+                .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
+                .build();
+
+        try {
+            URL weatherQueryUrl = new URL(weatherQueryUri.toString());
+            Log.v(TAG, "URL: " + weatherQueryUrl);
+            return weatherQueryUrl;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**

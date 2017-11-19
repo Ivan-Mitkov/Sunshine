@@ -47,7 +47,9 @@
             android:authorities="com.example.android.sunshine"
             android:name="com.example.android.sunshine.data.WeatherProvider"
             android:exported="false"/>
-        <!-- Register WeatherProvider in the manifest with the correct authorities -->
+
+        <service android:name=".sync.SunshineSyncIntentService"
+            android:exported="false"/>
     </application>
 
 </manifest>
