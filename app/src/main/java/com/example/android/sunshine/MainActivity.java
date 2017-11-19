@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClick(long date) {
         Intent weatherDetailIntent = new Intent(MainActivity.this, DetailActivity.class);
-//      COMPLETED (39) Refactor onClick to pass the URI for the clicked date with the Intent
+//      Refactor onClick to pass the URI for the clicked date with the Intent
         Uri uriForDateClicked = WeatherContract.WeatherEntry.buildWeatherUriWithDate(date);
         weatherDetailIntent.setData(uriForDateClicked);
         startActivity(weatherDetailIntent);
