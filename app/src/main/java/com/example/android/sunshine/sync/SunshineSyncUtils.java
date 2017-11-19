@@ -43,7 +43,7 @@ public class SunshineSyncUtils{
 
                 .setTag(SYNC_TAG)
 
-                .setConstraints(Constraint.ON_UNMETERED_NETWORK)
+                .setConstraints(Constraint.ON_ANY_NETWORK)
 
                 .setLifetime(Lifetime.FOREVER)
 
