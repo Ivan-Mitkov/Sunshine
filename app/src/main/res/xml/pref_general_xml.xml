@@ -17,4 +17,13 @@ android:layout_width="match_parent"
         android:key="units"
         android:title="Temperature Units"
         />
+    <!--  (11) Add a checkbox preference for enabling and disabling notifications -->
+    <!--  (12) Set the default of whether or not to show preferences using bools.xml -->
+    <CheckBoxPreference
+        android:defaultValue="@bool/showNotificationByDefault"
+        android:key="@string/pref_enable_notifications_key"
+        android:summaryOff="@string/pref_enable_notifications_false"
+        android:summaryOn="@string/pref_enable_notifications_true"
+        android:title="@string/pref_enable_notifications_label"
+        />
 </PreferenceScreen>
