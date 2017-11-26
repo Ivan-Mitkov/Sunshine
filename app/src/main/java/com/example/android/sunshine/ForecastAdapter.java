@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.sunshine.utilities.SunshineDateUtils;
@@ -28,18 +29,27 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
     final private ForecastAdapterOnClickHandler mClickHandler;
 
     class ForecastAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        final TextView weatherSummary;
+        final TextView dateView;
+        final TextView descriptionView;
+        final TextView highTemp;
+        final TextView lowTemp;
+        final ImageView weatherIcon;
 
         ForecastAdapterViewHolder(View view) {
             super(view);
-            weatherSummary = (TextView) view.findViewById(R.id.tv_weather_data);
+            dateView=(TextView)view.findViewById(R.id.date);
+            descriptionView=(TextView)view.findViewById(R.id.weather_description);
+            highTemp=(TextView)view.findViewById(R.id.high_temperature);
+            lowTemp=(TextView)view.findViewById(R.id.low_temperature);
+            weatherIcon=(ImageView)view.findViewById(R.id.weatherIcon);
             view.setOnClickListener(this);
+
         }
 
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-//          COMPLETED (37) Instead of passing the String for the clicked item, pass the date from the cursor
+//          Instead of passing the String for the clicked item, pass the date from the cursor
             mCursor.moveToPosition(adapterPosition);
             long dateInMillis = mCursor.getLong(MainActivity.INDEX_WEATHER_DATE);
             mClickHandler.onClick(dateInMillis);
@@ -70,21 +80,37 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         //move the cursor
         mCursor.moveToPosition(position);
 
-        long millisecondsDate = mCursor.getLong(MainActivity.INDEX_WEATHER_DATE);
-        String date= SunshineDateUtils.getFriendlyDateString(mContext,millisecondsDate,false);
+        long dateInMillis = mCursor.getLong(MainActivity.INDEX_WEATHER_DATE);
+         /* Get human readable string using our utility method */
+        String dateString = SunshineDateUtils.getFriendlyDateString(mContext, dateInMillis, false);
+        forecastAdapterViewHolder.dateView.setText(dateString);
 
+
+         /* Use the weatherId to obtain the proper description */
         int weatherId = mCursor.getInt(MainActivity.INDEX_WEATHER_CONDITION_ID);
+        int weatherImage=SunshineWeatherUtils.getSmallArtResourceIdForWeatherCondition(weatherId);
+        forecastAdapterViewHolder.weatherIcon.setImageResource(weatherImage);
+
         String description = SunshineWeatherUtils.getStringForWeatherCondition(mContext, weatherId);
+        forecastAdapterViewHolder.descriptionView.setText(description);
+        String descripionAlly = mContext.getString(R.string.a11y_forecast,description);
+        forecastAdapterViewHolder.descriptionView.setContentDescription(descripionAlly);
 
-        double maxTemp = mCursor.getDouble(MainActivity.INDEX_WEATHER_MAX_TEMP);
-        double minTemp = mCursor.getDouble(MainActivity.INDEX_WEATHER_MIN_TEMP);
+         /* Read high temperature from the cursor (in degrees celsius) */
+        double highInCelsius = mCursor.getDouble(MainActivity.INDEX_WEATHER_MAX_TEMP);
+        String highTempString=SunshineWeatherUtils.formatTemperature(mContext,highInCelsius);
+        String highTemp=mContext.getString(R.string.a11y_high_temp,highTempString);
+        forecastAdapterViewHolder.highTemp.setText(highTempString);
+        forecastAdapterViewHolder.highTemp.setContentDescription(highTemp);
 
-        String highAndLowTemperature =
-                SunshineWeatherUtils.formatHighLows(mContext, maxTemp, minTemp);
+         /* Read low temperature from the cursor (in degrees celsius) */
+        double lowInCelsius = mCursor.getDouble(MainActivity.INDEX_WEATHER_MIN_TEMP);
+        String lowTempString=SunshineWeatherUtils.formatTemperature(mContext,lowInCelsius);
+        String lowTemp=mContext.getString(R.string.a11y_low_temp,lowTempString);
+        forecastAdapterViewHolder.lowTemp.setText(lowTempString);
+        forecastAdapterViewHolder.lowTemp.setContentDescription(lowTemp);
 
-        String weatherSummary = date + " - " + description + " - " + highAndLowTemperature;
-        // Display the summary
-        forecastAdapterViewHolder.weatherSummary.setText(weatherSummary);
+
     }
 
     @Override

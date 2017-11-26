@@ -19,6 +19,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import com.example.android.sunshine.BuildConfig;
 import com.example.android.sunshine.data.SunshinePreferences;
 
 import java.io.IOException;
@@ -39,9 +40,9 @@ public final class  NetworkUtils {
             "https://andfun-weather.udacity.com/weather";
 
     private static final String STATIC_WEATHER_URL =
-            "https://andfun-weather.udacity.com/staticweather";
+            "http://api.openweathermap.org/data/2.5/forecast/daily?";
 
-    private static final String FORECAST_BASE_URL = STATIC_WEATHER_URL;
+    private static final String FORECAST_BASE_URL = DYNAMIC_WEATHER_URL;
 
     /*
      * NOTE: These values only effect responses from OpenWeatherMap, NOT from the fake weather
@@ -63,7 +64,7 @@ public final class  NetworkUtils {
     private final static String FORMAT_PARAM = "mode";
     private final static String UNITS_PARAM = "units";
     private final static String DAYS_PARAM = "cnt";
-
+    private final static String APPID_PARAM = "APPID";
     public static URL getUrl(Context context) {
         if (SunshinePreferences.isLocationLatLonAvailable(context)) {
             double[] preferredCoordinates = SunshinePreferences.getLocationCoordinates(context);
@@ -89,6 +90,7 @@ public final class  NetworkUtils {
                 .appendQueryParameter(FORMAT_PARAM,format)
                 .appendQueryParameter(UNITS_PARAM,units)
                 .appendQueryParameter(DAYS_PARAM,Integer.toString(numDays))
+//                .appendQueryParameter(APPID_PARAM, BuildConfig.OPEN_WEATHER_MAP_API_KEY)
                 .build();
         URL url = null;
         try{
@@ -117,6 +119,7 @@ public final class  NetworkUtils {
                 .appendQueryParameter(FORMAT_PARAM, format)
                 .appendQueryParameter(UNITS_PARAM, units)
                 .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
+//                .appendQueryParameter(APPID_PARAM, BuildConfig.OPEN_WEATHER_MAP_API_KEY)
                 .build();
 
         try {

@@ -34,6 +34,7 @@ public final class OpenWeatherJsonUtils {
 
     /* Location information */
     private static final String OWM_CITY = "city";
+    private static final String OWM_CITY_NAME = "name";
     private static final String OWM_COORD = "coord";
 
     /* Location coordinate */
@@ -51,6 +52,7 @@ public final class OpenWeatherJsonUtils {
     /* All temperatures are children of the "temp" object */
     private static final String OWM_TEMPERATURE = "temp";
 
+    private static final String OWM_MAIN = "main";
     /* Max temperature for the day */
     private static final String OWM_MAX = "max";
     private static final String OWM_MIN = "min";

@@ -17,6 +17,9 @@ android {
             minifyEnabled false
         }
     }
+    buildTypes.each {
+        it.buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY',' "ebae8cb6b38ab246b2d32810a784f201"'
+    }
 }
 
 dependencies {
@@ -27,6 +30,7 @@ dependencies {
     compile 'com.firebase:firebase-jobdispatcher:0.5.2'
     compile 'com.android.support:recyclerview-v7:25.1.0'
     compile 'com.android.support:preference-v7:25.1.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     // Instrumentation dependencies use androidTestCompile
     // (as opposed to testCompile for local unit tests run in the JVM)
     androidTestCompile 'junit:junit:4.12'

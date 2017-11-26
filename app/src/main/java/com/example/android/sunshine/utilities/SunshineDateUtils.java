@@ -21,6 +21,7 @@ import android.text.format.DateUtils;
 import com.example.android.sunshine.R;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -241,7 +242,7 @@ public final class SunshineDateUtils {
                  * documentation on DateFormat#getBestDateTimePattern(Locale, String)
                  * https://developer.android.com/reference/android/text/format/DateFormat.html#getBestDateTimePattern
                  */
-                String localizedDayName = new SimpleDateFormat("EEEE").format(localDate);
+                String localizedDayName = new SimpleDateFormat("EEEE",Locale.US).format(localDate);
                 return readableDate.replace(localizedDayName, dayName);
             } else {
                 return readableDate;
@@ -302,7 +303,7 @@ public final class SunshineDateUtils {
                 return context.getString(R.string.tomorrow);
 
             default:
-                SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
+                SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.US);
                 return dayFormat.format(dateInMillis);
         }
     }
